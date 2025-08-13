@@ -1,90 +1,88 @@
-import { View, Text, Pressable, Image, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+// src/components/recipes.js
 import React from "react";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  FlatList,
+  StyleSheet,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
-export default function Recipe({ foods }) {
+const Recipe = ({ categories, foods }) => {
   const navigation = useNavigation();
 
-  // Render individual recipe card
-  const renderItem = ({ item, index }) => (
-    <RecipeCard item={item} index={index} navigation={navigation} />
-  );
+  const ArticleCard = ({ item, index }) => {
+    return (
+      <View testID="articleDisplay" style={styles.cardWrap}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => navigation.navigate("RecipeDetail", item)}
+          style={styles.card}
+        >
+          {!!item?.recipeImage && (
+            <Image
+              source={{ uri: item.recipeImage }}
+              style={[
+                styles.image,
+                { height: index % 3 === 0 ? hp(22) : hp(28) },
+              ]}
+              resizeMode="cover"
+            />
+          )}
+          <View style={styles.textWrap}>
+            <Text numberOfLines={1} style={styles.title}>
+              {item?.recipeName || "Recipe"}
+            </Text>
+            <Text numberOfLines={2} style={styles.desc}>
+              {item?.recipeInstructions || "Tap to view details"}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   return (
-    <View style={styles.container}>
+    <View testID="recipesDisplay" style={styles.container}>
       <FlatList
-        data={foods}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.recipeId}
+        data={foods || []}
+        keyExtractor={(it, i) =>
+          (it?.idFood?.toString?.() ||
+            it?.id?.toString?.() ||
+            `${it?.recipeName}_${i}`) + ""
+        }
         numColumns={2}
-        columnWrapperStyle={styles.row}
-        contentContainerStyle={styles.listContent}
-        testID="recipesDisplay"
+        renderItem={({ item, index }) => (
+          <ArticleCard item={item} index={index} />
+        )}
+        columnWrapperStyle={{ gap: wp(3) }}
+        contentContainerStyle={{ paddingBottom: hp(4) }}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
-}
-
-// Recipe Card Component
-const RecipeCard = ({ item, index, navigation }) => {
-  return (
-    <TouchableOpacity 
-      onPress={() => navigation.navigate('RecipeDetail', { recipeId: item.recipeId })}
-      style={styles.cardContainer}
-      testID={`recipeCard-${item.recipeId}`}
-    >
-      <Image 
-        source={{ uri: item.recipeImage }} 
-        style={styles.articleImage} 
-      />
-      <Text style={styles.articleText}>{item.recipeName}</Text>
-      <Text style={styles.articleDescription}>{item.cookingDescription}</Text>
-    </TouchableOpacity>
-  );
 };
 
+export default Recipe;
+
 const styles = StyleSheet.create({
-  container: {
-    marginHorizontal: wp(4), // mx-4 equivalent
-    marginTop: hp(2),
-  },
-  row: {
-    justifyContent: 'space-between', // Align columns evenly
-  },
-  listContent: {
-    paddingBottom: hp(4), // Add bottom padding
-  },
-  cardContainer: {
-    width: '48%', // Two columns with spacing
-    marginBottom: hp(3),
-    overflow: 'hidden',
+  container: { paddingHorizontal: wp(4), paddingTop: hp(1) },
+  cardWrap: { flex: 1 },
+  card: {
+    backgroundColor: "#fff",
     borderRadius: 16,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    overflow: "hidden",
+    marginBottom: hp(2),
+    elevation: 2,
   },
-  articleImage: {
-    width: '100%',
-    height: hp(20), // Adjust height as needed
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-  },
-  articleText: {
-    fontSize: hp(1.7),
-    fontWeight: 'bold',
-    color: '#333',
-    marginLeft: wp(2),
-    marginTop: hp(1),
-  },
-  articleDescription: {
-    fontSize: hp(1.3),
-    color: '#666',
-    marginLeft: wp(2),
-    marginTop: hp(0.5),
-    marginBottom: hp(1.5),
-  },
+  image: { width: "100%" },
+  textWrap: { padding: 12 },
+  title: { fontWeight: "700", fontSize: wp(4) },
+  desc: { marginTop: 4, fontSize: wp(3.2), color: "#555" },
 });

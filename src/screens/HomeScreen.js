@@ -1,120 +1,181 @@
-import { View, Text, ScrollView, Image, StyleSheet } from "react-native";
+// src/screens/HomeScreen.js
 import React, { useState } from "react";
+import { View, Text, ScrollView, Image, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import Categories from "../components/categories";  // Import Categories component
-import FoodItems from "../components/recipes";       // Import FoodItems component
+
+import Categories from "../components/categories";
+import Recipes from "../components/recipes";
 
 export default function HomeScreen() {
   const [activeCategory, setActiveCategory] = useState("Chicken");
-  
-  // Hardcoded categories for news
-  const [categories, setCategories] = useState([
-    { idCategory: "1", strCategory: "Beef", strCategoryThumb: "https://www.themealdb.com/images/category/beef.png" },
-    { idCategory: "2", strCategory: "Chicken", strCategoryThumb: "https://www.themealdb.com/images/category/chicken.png" },
-    { idCategory: "3", strCategory: "Dessert", strCategoryThumb: "https://www.themealdb.com/images/category/dessert.png" },
-    // ... (other categories remain unchanged)
-  ]);
 
-  // Keep all foods in state (unfiltered list)
-  const [allFood, setAllFood] = useState([
-    // ... (all food items remain unchanged)
-  ]);
+  // Categories
+  const categories = [
+    {
+      idCategory: 1,
+      strCategory: "Chicken",
+      strCategoryThumb:
+        "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1200&auto=format&fit=crop",
+    },
+    {
+      idCategory: 2,
+      strCategory: "Vegetarian",
+      strCategoryThumb:
+        "https://images.unsplash.com/photo-1526312426976-593c125c02d5?q=80&w=1200&auto=format&fit=crop",
+    },
+    {
+      idCategory: 3,
+      strCategory: "Dessert",
+      strCategoryThumb:
+        "https://images.unsplash.com/photo-1470324161839-ce2bb6fa6bc3?q=80&w=1200&auto=format&fit=crop",
+    },
+    {
+      idCategory: 4,
+      strCategory: "Pasta",
+      strCategoryThumb:
+        "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1200&auto=format&fit=crop",
+    },
+  ];
 
-  const handleChangeCategory = (category) => {
-    setActiveCategory(category);
-  };
+  // Recipes data (short demo set)
+  const allFood = [
+    {
+      idFood: 101,
+      category: "Chicken",
+      recipeName: "Garlic Butter Chicken",
+      recipeImage:
+        "https://images.unsplash.com/photo-1585325701954-191c7b1c0af1?q=80&w=1200&auto=format&fit=crop",
+      recipeInstructions:
+        "Sear chicken in butter, add garlic, herbs, and finish in the pan.",
+      ingredients: [
+        { name: "Chicken breast", measure: "2 pcs" },
+        { name: "Butter", measure: "2 tbsp" },
+        { name: "Garlic", measure: "3 cloves" },
+      ],
+      mins: 25,
+      servings: 2,
+      calories: 520,
+      type: "Main",
+    },
+    {
+      idFood: 102,
+      category: "Vegetarian",
+      recipeName: "Roasted Veggies Bowl",
+      recipeImage:
+        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1200&auto=format&fit=crop",
+      recipeInstructions:
+        "Roast seasonal vegetables and serve over quinoa with tahini.",
+      ingredients: [
+        { name: "Mixed veg", measure: "3 cups" },
+        { name: "Quinoa", measure: "1 cup" },
+        { name: "Tahini", measure: "2 tbsp" },
+      ],
+      mins: 30,
+      servings: 2,
+      calories: 430,
+      type: "Main",
+    },
+    {
+      idFood: 103,
+      category: "Dessert",
+      recipeName: "Chocolate Mousse",
+      recipeImage:
+        "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?q=80&w=1200&auto=format&fit=crop",
+      recipeInstructions:
+        "Melt chocolate, fold with whipped cream, chill until set.",
+      ingredients: [
+        { name: "Dark chocolate", measure: "150 g" },
+        { name: "Cream", measure: "200 ml" },
+        { name: "Sugar", measure: "2 tbsp" },
+      ],
+      mins: 15,
+      servings: 4,
+      calories: 310,
+      type: "Dessert",
+    },
+    {
+      idFood: 104,
+      category: "Pasta",
+      recipeName: "Pesto Pasta",
+      recipeImage:
+        "https://images.unsplash.com/photo-1523983302122-73e702a3b88d?q=80&w=1200&auto=format&fit=crop",
+      recipeInstructions:
+        "Boil pasta, toss with basil pesto and parmesan. Serve warm.",
+      ingredients: [
+        { name: "Pasta", measure: "200 g" },
+        { name: "Pesto", measure: "3 tbsp" },
+        { name: "Parmesan", measure: "to taste" },
+      ],
+      mins: 20,
+      servings: 2,
+      calories: 600,
+      type: "Main",
+    },
+  ];
 
-  // Filter foods by active category
-  const filteredfoods = allFood.filter(food => food.category === activeCategory);
+  const handleChangeCategory = (cat) => setActiveCategory(cat);
+  const filteredfoods = allFood.filter((f) => f.category === activeCategory);
 
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        {/* Header Section */}
-        <View style={styles.headerContainer}>
+
+      <ScrollView testID="scrollContainer" showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <View testID="headerContainer" style={styles.header}>
           <Image
-            source={{ uri: 'https://cdn.pixabay.com/photo/2017/02/23/13/05/avatar-2092113_1280.png' }}
+            source={{
+              uri: "https://i.pravatar.cc/120",
+            }}
             style={styles.avatar}
           />
-          <Text style={styles.greetingText}>Hello, User!</Text>
+          <View>
+            <Text style={styles.hello}>Hello,</Text>
+            <Text style={styles.user}>User!</Text>
+          </View>
         </View>
 
-        {/* Title Section */}
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Make your own food,</Text>
-          <Text style={styles.subtitle}>
-            stay at <Text style={styles.highlight}>home</Text>
-          </Text>
+        {/* Title */}
+        <View testID="titleContainer" style={styles.titleWrap}>
+          <Text style={styles.bigTitle}>Make your own food</Text>
+          <Text style={styles.subtitle}>stay at home</Text>
         </View>
 
-        {/* Category List Component */}
-        <Categories 
-          categories={categories} 
-          activeCategory={activeCategory} 
-          onChangeCategory={handleChangeCategory} 
-        />
+        {/* Categories */}
+        <View testID="categoryList" style={{ marginTop: hp(1) }}>
+          <Categories
+            categories={categories}
+            activeCategory={activeCategory}
+            handleChangeCategory={handleChangeCategory}
+          />
+        </View>
 
-        {/* Food Items Component */}
-        <FoodItems foods={filteredfoods} />
+        {/* Recipes */}
+        <View testID="foodList" style={{ marginTop: hp(2) }}>
+          <Recipes foods={filteredfoods} categories={categories} />
+        </View>
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFFFFF", // white
-  },
-  scrollContainer: {
-    paddingBottom: 50,
-    paddingTop: hp(14), // pt-14 equivalent
-  },
-  headerContainer: {
-    marginHorizontal: wp(4), // mx-4 equivalent
+  container: { flex: 1, backgroundColor: "#f7f7f7" },
+  header: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: hp(2),
-    marginTop: hp(-8.5),
+    paddingHorizontal: wp(5),
+    paddingTop: hp(2),
+    gap: 12,
   },
-  avatar: {
-    height: hp(5),
-    width: hp(5.5),
-  },
-  greetingText: {
-    fontSize: hp(1.7),
-    color: "#52525B", // neutral-600
-    fontWeight: "600", // font-semibold
-    backgroundColor: "#F3F4F6", // gray-100
-    paddingHorizontal: wp(2), // px-2
-    paddingVertical: hp(0.5), // py-1
-    borderRadius: 9999, // full rounded
-    textAlign: "center",
-  },
-  titleContainer: {
-    marginHorizontal: wp(4), // mx-4
-    marginBottom: hp(2), // mb-2
-  },
-  title: {
-    fontSize: hp(3.8),
-    fontWeight: "600", // font-semibold
-    color: "#52525B", // neutral-600
-  },
-  subtitle: {
-    fontSize: hp(3.8),
-    fontWeight: "600", // font-semibold
-    color: "#52525B", // neutral-600
-  },
-  highlight: {
-    color: "#F59E0B", // amber-400
-  },
+  avatar: { width: 48, height: 48, borderRadius: 24 },
+  hello: { color: "#444" },
+  user: { fontWeight: "700", fontSize: wp(5) },
+  titleWrap: { paddingHorizontal: wp(5), marginTop: hp(2) },
+  bigTitle: { fontSize: wp(8), fontWeight: "800" },
+  subtitle: { color: "#666", marginTop: 4 },
 });
